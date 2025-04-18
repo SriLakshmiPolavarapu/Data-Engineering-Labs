@@ -45,22 +45,38 @@ df['TIMESTAMP'] = df['OPD_DATE'] + pd.to_timedelta(df['ACT_TIME'], unit='s')
 
 print(df[['OPD_DATE', 'ACT_TIME', 'TIMESTAMP']].head())
 
-import pandas as pd
+# D Decoding
 
+import pandas as pd
+from datetime import datetime, timedelta
+
+# Load CSV
 file_path = '/content/bc_trip259172515_230215.csv'
 df = pd.read_csv(file_path)
 
-def decode_timestamp(row):
-    opd_date = pd.to_datetime(row['OPD_DATE'], format='%d%b%Y:%H:%M:%S')
-    act_time = pd.to_timedelta(row['ACT_TIME'], unit='s')
-    return opd_date + act_time
+# Clean column names (important!)
+df.columns = df.columns.str.strip()
 
-df['TIMESTAMP'] = df.apply(decode_timestamp, axis=1)
+# Filter to keep only the relevant columns (Step 2 logic, adjust if needed)
+cols_to_keep = ['EVENT_NO_TRIP', 'OPD_DATE', 'VEHICLE_ID', 'METERS', 'ACT_TIME', 'GPS_LONGITUDE', 'GPS_LATITUDE']
+df_filtered = df[cols_to_keep].copy()
 
-df.drop(columns=['OPD_DATE', 'ACT_TIME'], inplace=True)
+# Define function to create timestamp
+def create_timestamp(row):
+    opd_date = datetime.strptime(row['OPD_DATE'], '%d%b%Y:%H:%M:%S')
+    act_time = timedelta(seconds=row['ACT_TIME'])
+    return pd.Timestamp(opd_date + act_time)
 
-print("Remaining columns after filtering:", df.columns)
-print(df.head())
+# Apply the function to create the TIMESTAMP column
+df_filtered['TIMESTAMP'] = df_filtered.apply(create_timestamp, axis=1)
+
+# Display result
+
+
+df_filtered.drop(columns=['OPD_DATE', 'ACT_TIME'], inplace=True)
+print(df_filtered.head())
+
+
 
 import pandas as pd
 
