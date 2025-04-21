@@ -1,6 +1,3 @@
-# this program loads Census ACS data using basic, slow INSERTs
-# run it with -h to see the command line options
-
 import time
 import psycopg2
 import argparse
@@ -8,10 +5,10 @@ import csv
 
 DBname = "postgres"
 DBuser = "postgres"
-DBpwd = "srilu2001"
+DBpwd = "yourpassword"
 TableName = 'census_data'
-Datafile = "filedoesnotexist"  # name of the data file to be loaded
-CreateDB = False  # indicates whether the DB table should be (re)-created
+Datafile = "filedoesnotexist" 
+CreateDB = False 
 
 
 def row2vals(row):
@@ -33,7 +30,7 @@ def row2vals(row):
            {row['Native']},             -- Native
            {row['Asian']},              -- Asian
            {row['Pacific']},            -- Pacific
-           {row['VotingAgeCitizen']},    -- VotingAgeCiting
+           {row['VotingAgeCitizen']},   -- VotingAgeCiting
            {row['Income']},             -- Income
            {row['IncomeErr']},          -- IncomeErr
            {row['IncomePerCap']},       -- IncomePerCap
@@ -119,7 +116,7 @@ def createTable(conn):
                                 Native              DECIMAL,
                                 Asian               DECIMAL,
                                 Pacific             DECIMAL,
-                                VotingAgeCitizen     DECIMAL,
+                                VotingAgeCitizen    DECIMAL,
                                 Income              DECIMAL,
                                 IncomeErr           DECIMAL,
                                 IncomePerCap        DECIMAL,
@@ -166,7 +163,7 @@ def upload(conn, icmdlist):
     start = time.perf_counter()
     cur = conn.cursor()
     with open(Datafile, 'r') as f:
-        next(f)  # Skip the header row
+        next(f) 
         cur.copy_from(f, TableName, sep=',', null='')
     elapsed = time.perf_counter() - start
     print(f'Finished Loading. Elapsed Time: {elapsed:0.4} seconds')
