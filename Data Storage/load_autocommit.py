@@ -6,7 +6,7 @@ import csv
 
 DBname = "postgres"
 DBuser = "postgres"
-DBpwd = "srilu2001"
+DBpwd = "yourpassword"
 TableName = 'census_data'
 Datafile = "acs2015_census_tract_data_part1.csv"
 CreateDB = False
@@ -18,7 +18,7 @@ def row2vals(row):
             row[key] = 0
         row['County'] = row['County'].replace('\'', '')
     ret = f"""
-           {row['TractId']},            -- TractId
+           {row['TractId']},                -- TractId
            '{row['State']}',                -- State
            '{row['County']}',               -- County
            {row['TotalPop']},               -- TotalPop
@@ -30,7 +30,7 @@ def row2vals(row):
            {row['Native']},                 -- Native
            {row['Asian']},                  -- Asian
            {row['Pacific']},                -- Pacific
-           {row['VotingAgeCitizen']},                -- VotingAgeCitizen
+           {row['VotingAgeCitizen']},       -- VotingAgeCitizen
            {row['Income']},                 -- Income
            {row['IncomeErr']},              -- IncomeErr
            {row['IncomePerCap']},           -- IncomePerCap
@@ -104,7 +104,7 @@ def createTable(conn):
         cursor.execute(f"""
                         DROP TABLE IF EXISTS {TableName};
                         CREATE TABLE {TableName} (
-                                TractId         NUMERIC,
+                                TractId             NUMERIC,
                                 State               TEXT,
                                 County              TEXT,
                                 TotalPop            INTEGER,
@@ -116,7 +116,7 @@ def createTable(conn):
                                 Native              DECIMAL,
                                 Asian               DECIMAL,
                                 Pacific             DECIMAL,
-                                VotingAgeCitizen             DECIMAL,
+                                VotingAgeCitizen    DECIMAL,
                                 Income              DECIMAL,
                                 IncomeErr           DECIMAL,
                                 IncomePerCap        DECIMAL,
@@ -163,7 +163,7 @@ def load(conn, icmdlist):
         for cmd in icmdlist:
             cursor.execute(cmd)
 
-        conn.commit()  # Manually commit since autocommit is disabled
+        conn.commit()
         elapsed = time.perf_counter() - start
         print(f'Finished Loading. Elapsed Time: {elapsed:0.4} seconds')
 
