@@ -6,18 +6,16 @@ import csv
 
 DBname = "postgres"
 DBuser = "postgres"
-DBpwd = "srilu2001"
+DBpwd = "yourpassword"
 TableName = 'census_data'
-# name of the data file to be loaded
 Datafile = "acs2015_census_tract_data_part1.csv"
-CreateDB = False  # indicates whether the DB table should be (re)-created
+CreateDB = False 
 
 
 def row2vals(row):
     for key in row:
         if not row[key]:
-            row[key] = 0  # ENHANCE: handle the null vals
-        # TIDY: eliminate quotes within literals
+            row[key] = 0
         row['County'] = row['County'].replace('\'', '')
     ret = f"""
            {row['TractId']},                -- TractId
@@ -73,7 +71,6 @@ def initialize():
     CreateDB = args.createtable
 
 
-# read the input data file into a list of row strings
 def readdata(fname):
     print(f"readdata: reading from File: {fname}")
     with open(fname, mode="r") as fil:
@@ -86,7 +83,6 @@ def readdata(fname):
     return rowlist
 
 
-# convert list of data rows into list of SQL 'INSERT INTO ...' commands
 def getSQLcmnds(rowlist):
     cmdlist = []
     for row in rowlist:
@@ -94,9 +90,6 @@ def getSQLcmnds(rowlist):
         cmd = f"INSERT INTO {TableName} VALUES ({valstr});"
         cmdlist.append(cmd)
     return cmdlist
-
-# connect to the database
-
 
 def dbconnect():
     connection = psycopg2.connect(
@@ -108,9 +101,6 @@ def dbconnect():
     connection.autocommit = True
     return connection
 
-
-# create the target table
-# assumes that conn is a valid, open connection to a Postgres database
 def createTable(conn):
 
     with conn.cursor() as cursor:
