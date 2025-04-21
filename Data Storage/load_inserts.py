@@ -1,6 +1,3 @@
-# this program loads Census ACS data using basic, slow INSERTs 
-# run it with -h to see the command line options
-
 import time
 import psycopg2
 import argparse
@@ -9,16 +6,16 @@ import csv
 
 DBname = "postgres"
 DBuser = "postgres"
-DBpwd = "srilu2001"
+DBpwd = "yourpassword"
 TableName = 'census_data'
-Datafile = "filedoesnotexist"  # name of the data file to be loaded
-CreateDB = False  # indicates whether the DB table should be (re)-created
+Datafile = "filedoesnotexist"  
+CreateDB = False  
 
 def row2vals(row):
 	for key in row:
 		if not row[key]:
-			row[key] = 0  # ENHANCE: handle the null vals
-		row['County'] = row['County'].replace('\'','')  # TIDY: eliminate quotes within literals
+			row[key] = 0  
+		row['County'] = row['County'].replace('\'','')  
 
 	ret = f"""
 	   {row['TractId']},                -- TractId
@@ -74,7 +71,6 @@ def initialize():
   global CreateDB
   CreateDB = args.createtable
 
-# read the input data file into a list of row strings
 def readdata(fname):
 	print(f"readdata: reading from File: {fname}")
 	with open(fname, mode="r") as fil:
@@ -86,7 +82,6 @@ def readdata(fname):
 
 	return rowlist
 
-# convert list of data rows into list of SQL 'INSERT INTO ...' commands
 def getSQLcmnds(rowlist):
 	cmdlist = []
 	for row in rowlist:
@@ -95,7 +90,6 @@ def getSQLcmnds(rowlist):
 		cmdlist.append(cmd)
 	return cmdlist
 
-# connect to the database
 def dbconnect():
 	connection = psycopg2.connect(
 		host="localhost",
@@ -106,8 +100,6 @@ def dbconnect():
 	connection.autocommit = True
 	return connection
 
-# create the target table 
-# assumes that conn is a valid, open connection to a Postgres database
 def createTable(conn):
 
 	with conn.cursor() as cursor:
